@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Full-Featured Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <div class="calculator-wrapper">
+            <div class="calculator">
+                <input type="text" id="display" readonly>
+                <div class="buttons">
+                    <button onclick="memoryClear()">MC</button>
+                    <button onclick="memoryRecall()">MR</button>
+                    <button onclick="memoryAdd()">M+</button>
+                    <button onclick="memorySubtract()">M-</button>
+                    <button onclick="handleScientific('percent')">%</button>
+                    <button onclick="clearDisplay()" class="btn-clear">AC</button>
+                    <button onclick="handleScientific('sin')">sin</button>
+                    <button onclick="handleScientific('ln')">ln</button>
+                    <button onclick="appendToDisplay('7')">7</button>
+                    <button onclick="appendToDisplay('8')">8</button>
+                    <button onclick="appendToDisplay('9')">9</button>
+                    <button onclick="appendToDisplay('/')" class="operator">/</button>
+                    <button onclick="handleScientific('cos')">cos</button>
+                    <button onclick="handleScientific('log')">log</button>
+                    <button onclick="appendToDisplay('4')">4</button>
+                    <button onclick="appendToDisplay('5')">5</button>
+                    <button onclick="appendToDisplay('6')">6</button>
+                    <button onclick="appendToDisplay('*')" class="operator">*</button>
+                    <button onclick="handleScientific('tan')">tan</button>
+                    <button onclick="handleScientific('sqrt')">√</button>
+                    <button onclick="appendToDisplay('1')">1</button>
+                    <button onclick="appendToDisplay('2')">2</button>
+                    <button onclick="appendToDisplay('3')">3</button>
+                    <button onclick="appendToDisplay('-')" class="operator">-</button>
+                    <button onclick="handleScientific('pow')">xʸ</button>
+                    <button onclick="appendToDisplay('π')">π</button>
+                    <button onclick="appendToDisplay('0')">0</button>
+                    <button onclick="appendToDisplay('.')">.</button>
+                    <button onclick="calculate()" class="equal">=</button>
+                    <button onclick="appendToDisplay('+')" class="operator">+</button>
+                </div>
+            </div>
+        </div>
+        <div class="history-container">
+            <h3>History</h3>
+            <div id="history-list"><p>Your calculations will appear here.</p></div>
+            <button id="clear-history-btn" onclick="clearHistory()">Clear History</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
