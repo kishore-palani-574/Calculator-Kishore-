@@ -1,94 +1,226 @@
-/**
- * ===================================================================
- * Scientific Calculator - Simplified
- * ===================================================================
+/*
+ * =============================================
+ * TABLE OF CONTENTS
+ * =============================================
+ *
+ * 1.  Global Styles & Font Imports
+ * 2.  Theme Variables (Light & Dark)
+ * 3.  Live Background Styles
+ * 4.  Main App Layout
+ * 5.  Theme Switcher Styles
+ * 6.  Calculator Component Styles
+ * 7.  History Panel Styles
+ * 8.  Mobile Responsiveness
+ *
+ * =============================================
  */
 
-// --- STATE VARIABLES & DOM REFERENCES ---
-const display = document.getElementById('display');
-const historyList = document.getElementById('history-list');
-const themeSwitcherBtn = document.getElementById('theme-switcher-btn'); // New
-const htmlEl = document.documentElement; // New
 
-let isDegrees = true;
-let memory = 0;
-let history = [];
+/* ============================================= */
+/* 1. Global Styles & Font Imports               */
+/* ============================================= */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap');
 
-// --- CORE DISPLAY & INPUT FUNCTIONS ---
-function appendToDisplay(input) {
-    const currentInput = display.value;
-    const lastSegment = currentInput.split(/[\+\-\*\/\(\)^%]/).pop();
-    if (input === '.' && lastSegment.includes('.')) { return; }
-    display.value += input;
-}
-function clearDisplay() { display.value = ""; }
-
-// --- SCIENTIFIC & CALCULATION LOGIC ---
-function handleScientific(func) {
-    const funcsWithParen = ['sin', 'cos', 'tan', 'log', 'ln', 'sqrt'];
-    if (funcsWithParen.includes(func)) { display.value += `Math.${func}(`; }
-    else if (func === 'pow') { display.value += '**'; }
-    else if (func === 'percent') { calculateAndSet(display.value + '/100'); }
-}
-function calculate() {
-    if (!display.value) return;
-    calculateAndSet(display.value, true);
-}
-function calculateAndSet(expression, addToHistory = false) {
-    try {
-        let originalExpr = expression.replace(/Math\./g, "").replace(/\*\*/g, "^");
-        let processedExpr = expression.replace(/π/g, 'Math.PI');
-        const trigRegex = /(Math\.sin|Math\.cos|Math\.tan)\(([^)]+)\)/g;
-        processedExpr = processedExpr.replace(trigRegex, (match, func, value) => {
-            const angle = new Function('return ' + value)();
-            if (isDegrees) { return `${func}(${angle} * Math.PI / 180)`; }
-            return `${func}(${angle})`;
-        });
-        const result = new Function('return ' + processedExpr)();
-        display.value = result;
-        if (addToHistory) { updateHistory(`${originalExpr} = ${result}`); }
-    } catch (error) { display.value = "Error"; }
+* {
+    box-sizing: border-box;
+    margin: 0;
 }
 
-// --- NEW: THEME MANAGEMENT ---
-/**
- * Toggles the theme between 'light' and 'dark' and updates the button icon.
- */
-function toggleTheme() {
-    const currentTheme = htmlEl.getAttribute('data-theme');
-    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-    htmlEl.setAttribute('data-theme', newTheme);
-    themeSwitcherBtn.innerHTML = newTheme === 'light' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-page);
+    transition: background-color 0.5s ease;
+    overflow: hidden;
+    position: relative;
 }
 
-// --- MEMORY FUNCTIONS ---
-function memoryClear() { memory = 0; }
-function memoryRecall() { display.value = memory; }
-function memoryAdd() { if (display.value) { memory += parseFloat(new Function('return ' + display.value)()); } }
-function memorySubtract() { if (display.value) { memory -= parseFloat(new Function('return ' + display.value)()); } }
 
-// --- HISTORY MANAGEMENT ---
-function updateHistory(entry) { history.unshift(entry); renderHistory(); }
-function renderHistory() {
-    historyList.innerHTML = "";
-    if (history.length === 0) { historyList.innerHTML = "<p>Your calculations will appear here.</p>"; return; }
-    history.forEach(entry => {
-        const div = document.createElement('div');
-        div.textContent = entry;
-        historyList.appendChild(div);
-    });
+/* ============================================= */
+/* 2. Theme Variables (Light & Dark)             */
+/* ============================================= */
+:root {
+    --bg-page: #e9f5f9;
+    --wave-color-1: #c6e3e9;
+    --wave-color-2: #84c1d9;
+    --bg-surface: rgba(255, 255, 255, 0.7);
+    --text-primary: #333;
+    --border-color: #d1e0ec;
+    --border-main: #5f9ea0;
+    --btn-num-bg: #fff;
+    --btn-sci-bg: #f0f8ff;
+    --btn-op-bg: #87ceeb;
+    --btn-op-text: #00425a;
+    --btn-eq-bg: #5f9ea0;
+    --btn-eq-text: #fff;
+    --btn-clear-bg: #f0f8ff;
+    --btn-clear-text: #5f6368;
+    --shadow-color: rgba(0, 0, 0, 0.1);
 }
-function clearHistory() { history = []; renderHistory(); }
 
-// --- EVENT LISTENERS & INITIALIZATION ---
-document.addEventListener('keydown', function(event) {
-    const key = event.key;
-    if ((key >= '0' && key <= '9') || key === '.') appendToDisplay(key);
-    else if (['+', '-', '*', '/'].includes(key)) appendToDisplay(key);
-    else if (key === 'Enter' || key === '=') { event.preventDefault(); calculate(); }
-    else if (key === 'Backspace') { display.value = display.value.slice(0, -1); }
-    else if (key === 'Escape') { clearDisplay(); }
-    else if (key === '(' || key === ')') { appendToDisplay(key); }
-});
+html[data-theme='dark'] {
+    --bg-page: #0c0a1f;
+    --wave-color-1: #1E88E5;
+    --wave-color-2: #5E35B1;
+    --bg-surface: rgba(22, 19, 44, 0.7);
+    --text-primary: #e9e7ff;
+    --text-secondary: #a7a1ff;
+    --border-color: #434966;
+    --border-main: #9575cd;
+    --btn-num-bg: rgba(35, 30, 68, 0.7);
+    --btn-sci-bg: rgba(48, 53, 78, 0.7);
+    --btn-op-bg: #1E88E5;
+    --btn-op-text: #ffffff;
+    --btn-eq-bg: #5E35B1;
+    --btn-eq-text: #ffffff;
+    --btn-clear-bg: rgba(48, 53, 78, 0.7);
+    --btn-clear-text: #a7a1ff;
+    --shadow-color: rgba(0, 0, 0, 0.4);
+}
 
-renderHistory();
+
+/* ============================================= */
+/* 3. Live Background Styles                     */
+/* ============================================= */
+@keyframes wave {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+body::before, body::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform-origin: 0 0;
+    z-index: -1;
+    background: var(--wave-color-1);
+    width: 60vh;
+    height: 60vh;
+    min-width: 400px;
+    min-height: 400px;
+    border-radius: 45%;
+    animation: wave 15s linear infinite;
+    opacity: 0.8;
+    transition: all 0.5s ease;
+}
+
+body::after {
+    animation: wave 20s linear infinite reverse;
+    background: var(--wave-color-2);
+}
+
+
+/* ============================================= */
+/* 4. Main App Layout                            */
+/* ============================================= */
+.app-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    width: 100%;
+    max-width: 820px;
+    align-items: flex-start;
+    z-index: 1;
+}
+
+.calculator-wrapper {
+    width: 100%;
+    max-width: 450px;
+    flex-shrink: 0;
+}
+
+
+/* ============================================= */
+/* 5. Theme Switcher Styles                      */
+/* ============================================= */
+.theme-switcher-container { display: flex; justify-content: flex-end; margin-bottom: 10px; }
+#theme-switcher-btn { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-main); background-color: var(--bg-surface); color: var(--text-primary); font-size: 1.1em; cursor: pointer; transition: all 0.3s ease; }
+#theme-switcher-btn:hover { transform: scale(1.1) rotate(15deg); }
+
+
+/* ============================================= */
+/* 6. Calculator Component Styles                */
+/* ============================================= */
+.calculator {
+    border-radius: 16px;
+    background: var(--bg-surface);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 12px var(--shadow-color);
+    overflow: hidden;
+    border: 1px solid var(--border-main);
+    transition: all 0.3s ease;
+}
+
+#display { width: 100%; padding: 20px 25px; font-size: 3.5em; font-weight: 500; text-align: right; border: none; background: transparent; color: var(--text-primary); box-sizing: border-box; min-height: 90px; border-bottom: 1px solid var(--border-main); transition: all 0.3s ease; }
+.buttons { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1px; background-color: var(--border-color); }
+button { padding: 20px; font-size: 1.2em; font-weight: 500; border: none; cursor: pointer; background-color: var(--btn-num-bg); color: var(--text-primary); transition: background-color 0.1s ease-in-out; }
+button:active { filter: brightness(0.9); }
+[onclick^="handleScientific"], [onclick*="memory"] { background-color: var(--btn-sci-bg); color: var(--text-secondary); }
+.operator { background-color: var(--btn-op-bg); color: var(--btn-op-text); }
+.equal { background-color: var(--btn-eq-bg); color: var(--btn-eq-text); }
+.btn-clear { background-color: var(--btn-clear-bg); color: var(--btn-clear-text); }
+
+
+/* ============================================= */
+/* 7. History Panel Styles                       */
+/* ============================================= */
+.history-container {
+    width: 100%;
+    max-width: 320px;
+    background: var(--bg-surface);
+    backdrop-filter: blur(8px);
+    border-radius: 16px;
+    padding: 20px;
+    border: 1px solid var(--border-main);
+    box-shadow: 0 4px 12px var(--shadow-color);
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+}
+
+.history-container h3 { margin-top: 0; text-align: center; border-bottom: 1px solid var(--border-main); padding-bottom: 10px; color: var(--text-secondary); }
+#history-list { height: 380px; overflow-y: auto; word-wrap: break-word; font-size: 1em; text-align: right; }
+#history-list p { opacity: 0.6; text-align: center; }
+#history-list div { padding: 8px 5px; border-bottom: 1px solid var(--border-color); opacity: 0.9; }
+#clear-history-btn { width: 100%; margin-top: 15px; padding: 10px; border-radius: 8px; background-color: var(--btn-eq-bg); color: var(--btn-eq-text); border: none; cursor: pointer; font-size: 1em; font-weight: 500; }
+
+
+/* ============================================= */
+/* 8. Mobile Responsiveness                      */
+/* ============================================= */
+@media (max-width: 767px) {
+    body {
+        padding: 10px;
+        align-items: flex-start;
+    }
+    .app-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+    }
+    .calculator-wrapper, .history-container {
+        width: 100%;
+        max-width: none;
+    }
+    #history-list {
+        height: 200px;
+    }
+}
+@media (max-width: 375px) {
+    #display {
+        font-size: 2.5em;
+        padding: 15px;
+    }
+    button {
+        padding: 15px 5px;
+        font-size: 0.9em;
+    }
+    #history-list {
+        height: 150px;
+    }
+}
