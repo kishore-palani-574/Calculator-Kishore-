@@ -5,7 +5,7 @@
  *
  * 1.  Global Styles & Font Imports
  * 2.  Theme Variables (Light & Dark)
- * 3.  Live Background Styles (Light Mode Only)
+ * 3.  Live Background Styles
  * 4.  Main App Layout
  * 5.  Theme Switcher Styles
  * 6.  Calculator Component Styles
@@ -29,13 +29,13 @@
 body {
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* Align to top */
+    align-items: center;
     min-height: 100vh;
-    padding: 5vh 20px; /* Vertical and horizontal padding */
+    padding: 20px;
     font-family: 'Poppins', sans-serif;
     background-color: var(--bg-page);
     transition: background-color 0.5s ease;
-    overflow-x: hidden;
+    overflow: hidden;
     position: relative;
 }
 
@@ -49,7 +49,6 @@ body {
     --wave-color-2: #84c1d9;
     --bg-surface: rgba(255, 255, 255, 0.7);
     --text-primary: #333;
-    --text-secondary: #5f6368;
     --border-color: #d1e0ec;
     --border-main: #5f9ea0;
     --btn-num-bg: #fff;
@@ -58,28 +57,34 @@ body {
     --btn-op-text: #00425a;
     --btn-eq-bg: #5f9ea0;
     --btn-eq-text: #fff;
+    --btn-clear-bg: #f0f8ff;
+    --btn-clear-text: #5f6368;
     --shadow-color: rgba(0, 0, 0, 0.1);
 }
 
 html[data-theme='dark'] {
-    --bg-page: #121212;
-    --bg-surface: #1e1e1e;
-    --text-primary: #ffffff;
-    --text-secondary: #b0b0b0;
-    --border-color: #121212;
-    --border-main: #444;
-    --btn-num-bg: #333333;
-    --btn-sci-bg: #d3d3d3;
-    --btn-op-bg: #d3d3d3;
-    --btn-op-text: #1e1e1e;
-    --btn-eq-bg: #2ecc71;
+    --bg-page: #0c0a1f;
+    --wave-color-1: #1E88E5;
+    --wave-color-2: #5E35B1;
+    --bg-surface: rgba(22, 19, 44, 0.7);
+    --text-primary: #e9e7ff;
+    --text-secondary: #a7a1ff;
+    --border-color: #434966;
+    --border-main: #9575cd;
+    --btn-num-bg: rgba(35, 30, 68, 0.7);
+    --btn-sci-bg: rgba(48, 53, 78, 0.7);
+    --btn-op-bg: #1E88E5;
+    --btn-op-text: #ffffff;
+    --btn-eq-bg: #5E35B1;
     --btn-eq-text: #ffffff;
-    --shadow-color: rgba(0, 0, 0, 0.5);
+    --btn-clear-bg: rgba(48, 53, 78, 0.7);
+    --btn-clear-text: #a7a1ff;
+    --shadow-color: rgba(0, 0, 0, 0.4);
 }
 
 
 /* ============================================= */
-/* 3. Live Background Styles (Light Mode Only)   */
+/* 3. Live Background Styles                     */
 /* ============================================= */
 @keyframes wave {
     0% { transform: rotate(0deg); }
@@ -101,17 +106,12 @@ body::before, body::after {
     border-radius: 45%;
     animation: wave 15s linear infinite;
     opacity: 0.8;
-    transition: opacity 0.5s ease;
+    transition: all 0.5s ease;
 }
 
 body::after {
     animation: wave 20s linear infinite reverse;
     background: var(--wave-color-2);
-}
-
-html[data-theme='dark'] body::before,
-html[data-theme='dark'] body::after {
-    opacity: 0;
 }
 
 
@@ -120,7 +120,7 @@ html[data-theme='dark'] body::after {
 /* ============================================= */
 .app-container {
     display: flex;
-    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    flex-wrap: wrap;
     justify-content: center;
     gap: 30px;
     width: 100%;
@@ -150,7 +150,7 @@ html[data-theme='dark'] body::after {
 .calculator {
     border-radius: 16px;
     background: var(--bg-surface);
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(8px);
     box-shadow: 0 4px 12px var(--shadow-color);
     overflow: hidden;
     border: 1px solid var(--border-main);
@@ -164,7 +164,7 @@ button:active { filter: brightness(0.9); }
 [onclick^="handleScientific"], [onclick*="memory"] { background-color: var(--btn-sci-bg); color: var(--text-secondary); }
 .operator { background-color: var(--btn-op-bg); color: var(--btn-op-text); }
 .equal { background-color: var(--btn-eq-bg); color: var(--btn-eq-text); }
-.btn-clear { background-color: var(--btn-sci-bg); color: var(--text-secondary); }
+.btn-clear { background-color: var(--btn-clear-bg); color: var(--btn-clear-text); }
 
 
 /* ============================================= */
@@ -174,7 +174,7 @@ button:active { filter: brightness(0.9); }
     width: 100%;
     max-width: 320px;
     background: var(--bg-surface);
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(8px);
     border-radius: 16px;
     padding: 20px;
     border: 1px solid var(--border-main);
@@ -191,29 +191,26 @@ button:active { filter: brightness(0.9); }
 
 
 /* ============================================= */
-/* 8. Mobile Responsiveness (FINAL REVISED)      */
+/* 8. Mobile Responsiveness                      */
 /* ============================================= */
-/* --- For Tablets and Phones --- */
 @media (max-width: 767px) {
     body {
         padding: 10px;
-        align-items: flex-start; /* Align to top on mobile */
+        align-items: flex-start;
     }
     .app-container {
-        flex-direction: column; /* Stack vertically */
+        flex-direction: column;
         align-items: center;
         gap: 20px;
     }
     .calculator-wrapper, .history-container {
         width: 100%;
-        max-width: 100%; /* Take full width */
+        max-width: none;
     }
     #history-list {
         height: 200px;
     }
 }
-
-/* --- For Small Mobile Phones --- */
 @media (max-width: 375px) {
     #display {
         font-size: 2.5em;

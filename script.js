@@ -1,12 +1,14 @@
 /**
  * ===================================================================
- * Scientific Calculator - Full Featured
+ * Scientific Calculator - Simplified
  * ===================================================================
  */
 
 // --- STATE VARIABLES & DOM REFERENCES ---
 const display = document.getElementById('display');
 const historyList = document.getElementById('history-list');
+const themeSwitcherBtn = document.getElementById('theme-switcher-btn'); // New
+const htmlEl = document.documentElement; // New
 
 let isDegrees = true;
 let memory = 0;
@@ -46,6 +48,17 @@ function calculateAndSet(expression, addToHistory = false) {
         display.value = result;
         if (addToHistory) { updateHistory(`${originalExpr} = ${result}`); }
     } catch (error) { display.value = "Error"; }
+}
+
+// --- NEW: THEME MANAGEMENT ---
+/**
+ * Toggles the theme between 'light' and 'dark' and updates the button icon.
+ */
+function toggleTheme() {
+    const currentTheme = htmlEl.getAttribute('data-theme');
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    htmlEl.setAttribute('data-theme', newTheme);
+    themeSwitcherBtn.innerHTML = newTheme === 'light' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
 }
 
 // --- MEMORY FUNCTIONS ---
