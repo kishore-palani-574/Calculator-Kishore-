@@ -1,0 +1,229 @@
+/*
+ * =============================================
+ * TABLE OF CONTENTS
+ * =============================================
+ *
+ * 1.  Global Styles & Font Imports
+ * 2.  Theme Variables (Light & Dark)
+ * 3.  Live Background Styles (Light Mode Only)
+ * 4.  Main App Layout
+ * 5.  Theme Switcher Styles
+ * 6.  Calculator Component Styles
+ * 7.  History Panel Styles
+ * 8.  Mobile Responsiveness
+ *
+ * =============================================
+ */
+
+
+/* ============================================= */
+/* 1. Global Styles & Font Imports               */
+/* ============================================= */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap');
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Align to top */
+    min-height: 100vh;
+    padding: 5vh 20px; /* Vertical and horizontal padding */
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-page);
+    transition: background-color 0.5s ease;
+    overflow-x: hidden;
+    position: relative;
+}
+
+
+/* ============================================= */
+/* 2. Theme Variables (Light & Dark)             */
+/* ============================================= */
+:root {
+    --bg-page: #e9f5f9;
+    --wave-color-1: #c6e3e9;
+    --wave-color-2: #84c1d9;
+    --bg-surface: rgba(255, 255, 255, 0.7);
+    --text-primary: #333;
+    --text-secondary: #5f6368;
+    --border-color: #d1e0ec;
+    --border-main: #5f9ea0;
+    --btn-num-bg: #fff;
+    --btn-sci-bg: #f0f8ff;
+    --btn-op-bg: #87ceeb;
+    --btn-op-text: #00425a;
+    --btn-eq-bg: #5f9ea0;
+    --btn-eq-text: #fff;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+html[data-theme='dark'] {
+    --bg-page: #121212;
+    --bg-surface: #1e1e1e;
+    --text-primary: #ffffff;
+    --text-secondary: #b0b0b0;
+    --border-color: #121212;
+    --border-main: #444;
+    --btn-num-bg: #333333;
+    --btn-sci-bg: #d3d3d3;
+    --btn-op-bg: #d3d3d3;
+    --btn-op-text: #1e1e1e;
+    --btn-eq-bg: #2ecc71;
+    --btn-eq-text: #ffffff;
+    --shadow-color: rgba(0, 0, 0, 0.5);
+}
+
+
+/* ============================================= */
+/* 3. Live Background Styles (Light Mode Only)   */
+/* ============================================= */
+@keyframes wave {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+body::before, body::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform-origin: 0 0;
+    z-index: -1;
+    background: var(--wave-color-1);
+    width: 60vh;
+    height: 60vh;
+    min-width: 400px;
+    min-height: 400px;
+    border-radius: 45%;
+    animation: wave 15s linear infinite;
+    opacity: 0.8;
+    transition: opacity 0.5s ease;
+}
+
+body::after {
+    animation: wave 20s linear infinite reverse;
+    background: var(--wave-color-2);
+}
+
+html[data-theme='dark'] body::before,
+html[data-theme='dark'] body::after {
+    opacity: 0;
+}
+
+
+/* ============================================= */
+/* 4. Main App Layout                            */
+/* ============================================= */
+.app-container {
+    display: flex;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    justify-content: center;
+    gap: 30px;
+    width: 100%;
+    max-width: 820px;
+    align-items: flex-start;
+    z-index: 1;
+}
+
+.calculator-wrapper {
+    width: 100%;
+    max-width: 450px;
+    flex-shrink: 0;
+}
+
+
+/* ============================================= */
+/* 5. Theme Switcher Styles                      */
+/* ============================================= */
+.theme-switcher-container { display: flex; justify-content: flex-end; margin-bottom: 10px; }
+#theme-switcher-btn { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-main); background-color: var(--bg-surface); color: var(--text-primary); font-size: 1.1em; cursor: pointer; transition: all 0.3s ease; }
+#theme-switcher-btn:hover { transform: scale(1.1) rotate(15deg); }
+
+
+/* ============================================= */
+/* 6. Calculator Component Styles                */
+/* ============================================= */
+.calculator {
+    border-radius: 16px;
+    background: var(--bg-surface);
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 12px var(--shadow-color);
+    overflow: hidden;
+    border: 1px solid var(--border-main);
+    transition: all 0.3s ease;
+}
+
+#display { width: 100%; padding: 20px 25px; font-size: 3.5em; font-weight: 500; text-align: right; border: none; background: transparent; color: var(--text-primary); box-sizing: border-box; min-height: 90px; border-bottom: 1px solid var(--border-main); transition: all 0.3s ease; }
+.buttons { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1px; background-color: var(--border-color); }
+button { padding: 20px; font-size: 1.2em; font-weight: 500; border: none; cursor: pointer; background-color: var(--btn-num-bg); color: var(--text-primary); transition: background-color 0.1s ease-in-out; }
+button:active { filter: brightness(0.9); }
+[onclick^="handleScientific"], [onclick*="memory"] { background-color: var(--btn-sci-bg); color: var(--text-secondary); }
+.operator { background-color: var(--btn-op-bg); color: var(--btn-op-text); }
+.equal { background-color: var(--btn-eq-bg); color: var(--btn-eq-text); }
+.btn-clear { background-color: var(--btn-sci-bg); color: var(--text-secondary); }
+
+
+/* ============================================= */
+/* 7. History Panel Styles                       */
+/* ============================================= */
+.history-container {
+    width: 100%;
+    max-width: 320px;
+    background: var(--bg-surface);
+    backdrop-filter: blur(5px);
+    border-radius: 16px;
+    padding: 20px;
+    border: 1px solid var(--border-main);
+    box-shadow: 0 4px 12px var(--shadow-color);
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+}
+
+.history-container h3 { margin-top: 0; text-align: center; border-bottom: 1px solid var(--border-main); padding-bottom: 10px; color: var(--text-secondary); }
+#history-list { height: 380px; overflow-y: auto; word-wrap: break-word; font-size: 1em; text-align: right; }
+#history-list p { opacity: 0.6; text-align: center; }
+#history-list div { padding: 8px 5px; border-bottom: 1px solid var(--border-color); opacity: 0.9; }
+#clear-history-btn { width: 100%; margin-top: 15px; padding: 10px; border-radius: 8px; background-color: var(--btn-eq-bg); color: var(--btn-eq-text); border: none; cursor: pointer; font-size: 1em; font-weight: 500; }
+
+
+/* ============================================= */
+/* 8. Mobile Responsiveness (FINAL REVISED)      */
+/* ============================================= */
+/* --- For Tablets and Phones --- */
+@media (max-width: 767px) {
+    body {
+        padding: 10px;
+        align-items: flex-start; /* Align to top on mobile */
+    }
+    .app-container {
+        flex-direction: column; /* Stack vertically */
+        align-items: center;
+        gap: 20px;
+    }
+    .calculator-wrapper, .history-container {
+        width: 100%;
+        max-width: 100%; /* Take full width */
+    }
+    #history-list {
+        height: 200px;
+    }
+}
+
+/* --- For Small Mobile Phones --- */
+@media (max-width: 375px) {
+    #display {
+        font-size: 2.5em;
+        padding: 15px;
+    }
+    button {
+        padding: 15px 5px;
+        font-size: 0.9em;
+    }
+    #history-list {
+        height: 150px;
+    }
+}
